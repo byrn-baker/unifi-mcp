@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0+convergence.1] - 2026-11-12
+
+Convergence fork (byrn-baker/unifi-mcp, branch `convergence`): upstream 0.10.0 plus the changes below.
+
+### Added
+
+- `integration_list_sites`, `integration_list_devices`, `integration_get_device`, `integration_get_device_stats`, `integration_get_ap_radios` (new Network group `integration`, module `integration_devices`, all Tier 1) on the official Integration API: device detail with per-radio channel and width, latest device statistics with per-radio TX retries, and one-call access point radio triage. They work on UniFi OS Server installs where the legacy device paths hang or are missing.
+- `UNIFI_PRELOAD_GROUPS` (same format as `UNIFI_TOOL_GROUPS`) registers tool groups at startup without probing the console, for clients that cannot call the loaders, such as an agent whose tool allowlist excludes them. Unset preloads nothing; an unknown group stops startup.
+
+### Fixed
+
+- The Network product probe used the legacy `/proxy/network/api/s/{site}/stat/sysinfo`, which hangs or is missing on some UniFi OS Server installs, so `load_network_tools` reported Network as not installed. It now probes `/proxy/network/integration/v1/info`, the endpoint `get_server_info` already uses for the version.
+
 ## [0.10.0] - 2026-11-12
 
 UniFi Network 11 support. Tested against UniFi OS 6.0.17, Network 11.0.99 and Protect 7.3.74 on a UDM Pro with read-only live checks (77 of 79 no-argument read tools, and every new or changed tool, ran against the console with writes blocked). Network goes from 160 tools to 166 (223 in total with everything loaded). Coverage is now counted by HTTP method and path: Network 82.2% (60 of 73), Protect 91.9% (68 of 74), Site Manager 64.3% (9 of 14). See [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for the feature matrix, sources and gaps.
